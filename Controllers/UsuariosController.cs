@@ -251,14 +251,15 @@ namespace RpgApi.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Name, usuario.Username)
+                new Claim(ClaimTypes.Name, usuario.Username),
+                new Claim(ClaimTypes.Role, usuario.Perfil) //add uma claim para constar o perfil do usuario no acesso/ao gerar o token
             };
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("ConfiguracaoToken:Chave").Value));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddMonths(1),
                 SigningCredentials = creds
             };
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zLBlx8BdDlLQLUkGqlDsJjp33MnK1Ih8AUp/T+XQXp4iKdVTKzNsgqoWjKp4cdp5f66V7B24xdZc2Zsobr5/aQ==",
+  "dgSpecHash": "5RzGt7m0K1jwWTGaCJPu573wQDdaHd2jkwkgBTwkmn2n9OKwoaU6DX8qFZpkjjOFvyyK+Rz3/vgLVnYT4unMMA==",
   "success": true,
-  "projectFilePath": "D:\\3DS_Mayara_Nicolly\\RpgApi\\RpgApi\\RpgApi.csproj",
+  "projectFilePath": "D:\\3DS_Mayara\\RpgApi2\\RpgApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\etechas\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\etechas\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.9\\microsoft.aspnetcore.authentication.jwtbearer.6.0.9.nupkg.sha512",

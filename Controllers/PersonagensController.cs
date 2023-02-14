@@ -9,22 +9,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 
 namespace RpgApi.Controllers
-{   [Authorize]
+{   [Authorize(Roles = "Jogador, Admin")]
     [ApiController]
     [Route("[Controller]")]
     public class PersonagensController : ControllerBase
     {
         //Programação de toda a classe ficará aqui abaixo
         private readonly DataContext _context; //Declaração do atributo
-         private readonly IConfiguration _configuration;
-         //Inicialização do atributo a partir de um parâmetro          //Iconfiguration da acesso ao appsettings
-        public PersonagensController(DataContext context, IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        
+         //Inicialização do atributo a partir de um parâmetro          
+         //Iconfiguration da acesso ao appsettings
+         //IHttpContextAcessor permite o acesso a configuração Singleton
+        public PersonagensController(DataContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
+            _httpContextAccessor = _httpContextAccessor;
         }
 
         [HttpGet("{id}")] //Buscar pelo id
@@ -70,6 +76,9 @@ namespace RpgApi.Controllers
                 {
                     throw new System.Exception("Pontos de vida não pode ser maior que 100");
                 }
+
+                novoPersonagem.Usuario = _context.Usuarios.FirstOrDefault(uBusca => uBusca.Id == ObterUsuarioId());
+
                 await _context.Personagens.AddAsync(novoPersonagem);
                 await _context.SaveChangesAsync();
 
@@ -264,6 +273,40 @@ namespace RpgApi.Controllers
 
                 List<Personagem> lista = await _context.Personagens
                     .Where(u => u.Usuario.Id == id).ToListAsync();
+                return Ok(lista);
+            }
+            catch(System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private int ObterUsuarioId()
+        {
+            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+
+        private string ObterPerfilUsuario()
+        {
+            return _httpContextAccessor.HttpContextAccessor.User.FindFirstValue(ClaimTypes.Role);
+        }
+
+        [HttpGet("GetByPerfil")]
+        public async Task<IActionResult> GetByPerfilAsync()
+        {
+            try
+            {
+                List<Personagem> lista = new List<Personagem>();
+
+                if(ObterPerfilUsuario() == "Admin")
+                { 
+                    lista = await _context.Personagens.ToListAsync();
+                }
+                else
+                { 
+                    lista = await _context.Personagens
+                        .Where(p => p.Usuario.Id == ObterUsuarioId()).ToListAsync();
+                }
                 return Ok(lista);
             }
             catch(System.Exception ex)
